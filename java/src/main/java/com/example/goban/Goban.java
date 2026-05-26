@@ -23,6 +23,26 @@ public class Goban {
     }
 
     public boolean isTaken(int x, int y) {
-        throw new UnsupportedOperationException("Not implemented yet");
+		var stone = getStatus(x, y);
+		if (stone == Status.EMPTY || stone == Status.OUT) {
+			return false;
+		}
+		var visited = new boolean[goban.getFirst().length()][goban.size()];
+		return !hasLiberty(x, y, stone, visited);
     }
+
+	private boolean hasLiberty(int x, int y, Status stone, boolean[][] visited) {
+		var currentStone = getStatus(x, y);
+		if (currentStone == Status.OUT) return false;
+		if (currentStone == Status.EMPTY) return true;
+		if (currentStone != stone) return false;
+		if (visited[x][y]) return false;
+		visited[x][y] = true;
+		for (var dir : Direction.values()) {
+			if (hasLiberty(x + dir.getDx(), y + dir.getDy(), stone, visited)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
